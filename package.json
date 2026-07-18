@@ -19,8 +19,10 @@
   },
   "homepage": "https://github.com/sapnaalex/eden-nest#readme",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "sequelize": "^6.37.8",
     "sqlite3": "^6.0.1"
   }
