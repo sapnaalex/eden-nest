@@ -1,6 +1,6 @@
-// client/app/page.js
 'use client';
 import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 export default function Dashboard() {
   const [inventory] = useState([
@@ -27,9 +27,13 @@ export default function Dashboard() {
         body: JSON.stringify(aiForm)
       });
       const data = await res.json();
-      setAiResult(data.recommendations || data.error);
-    } catch {
-      setAiResult('Error connecting to AI care service. Ensure backend is running.');
+      if (!res.ok) {
+        setAiResult(`Backend Error (${res.status}): ${data.error || 'Failed to fetch'}`);
+      } else {
+        setAiResult(data.recommendations);
+      }
+    } catch (err) {
+      setAiResult(`Network Error: ${err.message}. Check if backend is running on http://localhost:5000 and CORS is enabled.`);
     } finally {
       setLoading(false);
     }
@@ -139,8 +143,19 @@ export default function Dashboard() {
             </button>
           </form>
           {aiResult && (
-            <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-slate-700 text-sm whitespace-pre-wrap">
-              {aiResult}
+            <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-slate-800 text-sm">
+              <ReactMarkdown
+                components={{
+                  p: ({ node, ...props }) => <p className="mb-3 last:mb-0 leading-relaxed" {...props} />,
+                  ul: ({ node, ...props }) => <ul className="list-disc pl-5 mb-3 space-y-2" {...props} />,
+                  ol: ({ node, ...props }) => <ol className="list-decimal pl-5 mb-3 space-y-2" {...props} />,
+                  li: ({ node, ...props }) => <li className="leading-relaxed" {...props} />,
+                  strong: ({ node, ...props }) => <strong className="font-bold text-slate-900" {...props} />,
+                  em: ({ node, ...props }) => <em className="italic text-slate-700" {...props} />,
+                }}
+              >
+                {aiResult}
+              </ReactMarkdown>
             </div>
           )}
         </section>

@@ -141,3 +141,10 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+
+database.sqlite
+.next/
+client/node_modules/
+client/.next/
+*.class

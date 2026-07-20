@@ -1,64 +1,87 @@
-# Eden Nest 🐦🐰
+# 🏡 Eden Nest Pets — Management & AI Care Advisory System
 
-An integrated, production-ready management application designed for **Eden Nest Pets**—a boutique pet sales and specialized boarding business. 
-
-This project is built as the Integrated Software Engineering Capstone Project for the Product Engineering Proficiency & DSA Mastery Bootcamp. It leverages modern full-stack engineering, custom data structures for resource scheduling, and AI-driven care recommendations.
+An integrated management platform designed for avian and small-animal retail tracking, cage boarding logistics, custom Data Structures & Algorithms (DSA) execution, and AI-driven care recommendations.
 
 ---
 
-## 🚀 Project Overview
-
-**Eden Nest Manager** streamlines day-to-day operations for bird, rabbit, and fish sales and boarding. The system addresses the unique real-world workflows of the business:
-* **Hybrid Boarding Logistics:** Handles boarding for pets where owners either bring their own cages ("Owner Cage") or utilize limited shop resources ("Shop Cage").
-* **Active Inventory Tracking:** Manages the live catalog of birds and rabbits available for sale.
-* **Intelligent Care Engine:** Uses AI to generate custom diet and care schedules based on customer inputs.
+## 📌 Project Overview
+Eden Nest Pets combines an e-commerce inventory management catalog with a boarding placement system. Built with a Node.js/Express backend, a Next.js frontend dashboard, a custom Java DSA engine for booking conflicts and task scheduling, and an AI integration using OpenRouter / Google Gemini endpoints to generate dynamic pet care plans.
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Tech Stack & Architecture
 
-* **Frontend:** Next.js (App Router), Tailwind CSS, TypeScript
-* **Backend:** Node.js, Express.js
-* **Database:** PostgreSQL / SQLite (via Prisma ORM)
-* **AI Integration:** Gemini API (for automated care-sheet and diet-plan generation)
-
----
-
-## 📐 Core Engineering Pillars
-
-### 1. Data Structures & Algorithms (DSA)
-* **The Problem:** While boarding capacity is flexible for clients bringing their own cages, "Shop Cages" are a strictly limited resource. Overbooking shop cages leads to operational friction.
-* **The Solution:** We implement an **Interval Tree** in TypeScript. 
-  * Each node in the tree represents a confirmed boarding interval `[start_date, end_date]` requiring a shop cage.
-  * When a new booking is requested, the system queries the Interval Tree in $O(\log n)$ time to check for overlaps and verify if a shop cage is available.
-  * *Fallback:* If no shop cages are free, the system prompts the booking flow to require an "Owner Cage."
-
-### 2. Product Engineering
-* **Dashboard Interface:** A clean, responsive dashboard displaying currently boarded pets, feeding instructions, and active sales listings.
-* **Operational Workflows:** Seamless transition from booking request to active boarding status, tracking food and supplies brought by owners.
-
-### 3. AI Integration
-* **Eden Care AI:** An LLM-powered helper that parses custom food details and pet details submitted by the owner to generate optimized feeding alarms, care sheets, and transition schedules for the boarding staff.
-
-### 4. Open Source Collaboration
-* Fully modularized component structure.
-* Adherence to clean coding practices with strict ESLint and Prettier configurations.
-* Contributions managed via documented feature branches and Pull Requests.
+* **Frontend:** Next.js (App Router), Tailwind CSS, `react-markdown`
+* **Backend:** Node.js, Express.js, Sequelize ORM, SQLite Database
+* **DSA Engine:** Java (Interval Tree for booking date overlap checks, Min-Heap Priority Queue for daily care task scheduling)
+* **AI Integration:** OpenRouter API / Google Gemini Integration (`/api/ai/care-plan`)
 
 ---
 
-## 📅 Development Roadmap (Sprint: July 16 - July 22)
+## 🚀 API Endpoint Index (11 Endpoints)
 
-* **July 16 (Day 1):** Project Initialization, Database Schema Setup (Users, Pets, Bookings, Inventory).
-* **July 17 (Day 2):** Backend API Development (CRUD operations for bookings and pet sales).
-* **July 18 (Day 3):** Implementation & Unit Testing of the **Interval Tree** scheduling algorithm.
-* **July 19 (Day 4):** Frontend Dashboard & Booking Form Development.
-* **July 20 (Day 5):** AI Care Assistant Integration (Gemini API pipeline setup).
-* **July 21 (Day 6):** Integration, End-to-End Testing, and Open-Source documentation (`CONTRIBUTING.md`).
-* **July 22 (Day 7):** Deployment, Final Polish, and Demonstration.
+### 🔐 Authentication (`/api/auth`)
+* `POST /api/auth/register` — Register new user or administrator accounts.
+* `POST /api/auth/login` — Authenticate users and return JWT access tokens.
+
+### 🏷️ Inventory CRUD (`/api/inventory`)
+* `POST /api/inventory/` — Add a new pet or item to retail stock.
+* `GET /api/inventory/` — Retrieve all retail inventory records.
+* `GET /api/inventory/:id` — Fetch details for a specific animal or item ID.
+* `PUT /api/inventory/:id` — Update pricing, quantity, or availability status.
+* `DELETE /api/inventory/:id` — Remove an item record from the inventory.
+
+### 🗓️ Boarding Logistics (`/api/bookings`)
+* `POST /api/bookings/` — Submit a cage placement request.
+* `GET /api/bookings/` — List active and historical boarding reservations.
+* `DELETE /api/bookings/:id` — Cancel an existing boarding placement.
+
+### ✨ AI Smart Care Advisor (`/api/ai`)
+* `POST /api/ai/care-plan` — Generate customized daily feeding and care routines via AI.
 
 ---
 
-## 📄 License
+## ⚙️ Local Setup & Run Guide
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+### 1. Prerequisites
+* **Node.js:** v18+
+* **Java:** JDK 21+
+
+### 2. Environment Configuration
+Create a `.env` file in the root directory:
+```env
+PORT=5000
+JWT_SECRET=your_jwt_secret_here
+OPENROUTER_API_KEY=your_openrouter_api_key_here
+```
+### 3. Backend Setup
+
+# Install dependencies
+```
+npm install
+```
+# Start Express backend server
+```
+node server.js
+```
+
+### 4. Java DSA Core Module
+```Bash
+cd dsa-core
+javac CageScheduler.java
+java CageScheduler
+```
+### 5. Frontend Setup
+```Bash
+cd client
+```
+
+# Install frontend dependencies
+```
+npm install
+```
+
+# Run Next.js development server
+```
+npm run dev
+```
