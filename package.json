@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/sapnaalex/eden-nest#readme",
   "dependencies": {
+    "@google/genai": "^2.12.0",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
