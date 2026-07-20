@@ -1,23 +1,45 @@
 // client/app/page.js
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export default function Dashboard() {
-  // Mock states to make the application immediately visible for UI review
-  const [inventory, setInventory] = useState([
+  const [inventory] = useState([
     { id: 1, petType: 'Bird', breed: 'Lovebird', price: '1500', status: 'Available' },
     { id: 2, petType: 'Rabbit', breed: 'Angora', price: '2500', status: 'Available' }
   ]);
   
-  const [bookings, setBookings] = useState([
+  const [bookings] = useState([
     { id: 1, customerName: 'Sapna', petType: 'Bird', startDate: '2026-07-20', endDate: '2026-07-25', cageType: 'Shop Cage' }
   ]);
+
+  const [aiForm, setAiForm] = useState({ petType: 'Bird', breed: 'Lovebird', age: '1 year', dietaryNotes: 'Prefers fresh fruits' });
+  const [aiResult, setAiResult] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleGenerateCare = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setAiResult('');
+    try {
+      const res = await fetch('http://localhost:5000/api/ai/care-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(aiForm)
+      });
+      const data = await res.json();
+      setAiResult(data.recommendations || data.error);
+    } catch {
+      setAiResult('Error connecting to AI care service. Ensure backend is running.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <header className="mb-8 border-b pb-4 bg-white p-6 rounded-lg shadow-sm">
         <h1 className="text-3xl font-bold text-slate-800">🏡 Eden Nest Pets</h1>
-        <p className="text-gray-500 mt-1">Integrated Management & Boarding Dashboard</p>
+        <p className="text-gray-500 mt-1">Integrated Management & AI Care Advisory Dashboard</p>
       </header>
 
       <main className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -76,6 +98,51 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* Section 3: Gemini AI Smart Assistant */}
+        <section className="bg-white p-6 rounded-lg shadow-md md:col-span-2">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-slate-700">✨ Gemini AI Smart Care Advisor</h2>
+            <span className="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2.5 py-0.5 rounded">AI Powered</span>
+          </div>
+          <form onSubmit={handleGenerateCare} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+            <input 
+              type="text" 
+              placeholder="Pet Type (e.g. Bird)" 
+              value={aiForm.petType} 
+              onChange={(e) => setAiForm({...aiForm, petType: e.target.value})}
+              className="border p-2 rounded text-sm"
+              required 
+            />
+            <input 
+              type="text" 
+              placeholder="Breed (e.g. Lovebird)" 
+              value={aiForm.breed} 
+              onChange={(e) => setAiForm({...aiForm, breed: e.target.value})}
+              className="border p-2 rounded text-sm"
+              required 
+            />
+            <input 
+              type="text" 
+              placeholder="Age" 
+              value={aiForm.age} 
+              onChange={(e) => setAiForm({...aiForm, age: e.target.value})}
+              className="border p-2 rounded text-sm" 
+            />
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="bg-emerald-600 text-white font-medium py-2 px-4 rounded hover:bg-emerald-700 transition"
+            >
+              {loading ? 'Generating...' : 'Generate Care Routine'}
+            </button>
+          </form>
+          {aiResult && (
+            <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-slate-700 text-sm whitespace-pre-wrap">
+              {aiResult}
+            </div>
+          )}
         </section>
       </main>
     </div>
