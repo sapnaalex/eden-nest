@@ -1,16 +1,18 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors'); // <-- Add this
 const { sequelize } = require('./models');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+app.use(cors()); // <-- Add this
 app.use(express.json());
 
 // Mount API Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/inventory', require('./routes/inventory'));
 app.use('/api/bookings', require('./routes/bookings'));
-app.use('/api/ai', require('./routes/ai')); // Day 6: AI Integration
+app.use('/api/ai', require('./routes/ai'));
 
 app.get('/', (req, res) => {
     res.send('Eden Nest Pets API: 11 Core Endpoints & Gemini AI Active.');
