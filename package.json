@@ -4,8 +4,9 @@
   "description": "An integrated, production-ready management application designed for **Eden Nest Pets**—a boutique pet sales and specialized boarding business.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "start": "node server.js",
+  "postinstall": "npm rebuild sqlite3 --build-from-source"
+},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sapnaalex/eden-nest.git"
