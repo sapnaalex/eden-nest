@@ -2,6 +2,9 @@
 import { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 
+// Base URL configuration for local vs production deployment
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://eden-nest.onrender.com';
+
 export default function Dashboard() {
   // Inventory State
   const [inventory, setInventory] = useState([]);
@@ -44,7 +47,7 @@ export default function Dashboard() {
   const fetchInventory = async () => {
     try {
       setInventoryLoading(true);
-      const res = await fetch('http://localhost:5000/api/inventory');
+      const res = await fetch(`${API_BASE_URL}/api/inventory`);
       if (res.ok) setInventory(await res.json());
     } catch (err) {
       console.error('Failed to fetch inventory:', err);
@@ -56,7 +59,7 @@ export default function Dashboard() {
   const fetchBookings = async () => {
     try {
       setBookingsLoading(true);
-      const res = await fetch('http://localhost:5000/api/bookings');
+      const res = await fetch(`${API_BASE_URL}/api/bookings`);
       if (res.ok) setBookings(await res.json());
     } catch (err) {
       console.error('Failed to fetch bookings:', err);
@@ -75,7 +78,7 @@ export default function Dashboard() {
     e.preventDefault();
     if (!newPet.petType || !newPet.breed || !newPet.price) return;
     try {
-      const res = await fetch('http://localhost:5000/api/inventory', {
+      const res = await fetch(`${API_BASE_URL}/api/inventory`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newPet)
@@ -91,7 +94,7 @@ export default function Dashboard() {
 
   const handleDeletePet = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/inventory/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${API_BASE_URL}/api/inventory/${id}`, { method: 'DELETE' });
       if (res.ok) fetchInventory();
     } catch (err) {
       console.error('Failed to delete pet:', err);
@@ -153,7 +156,7 @@ export default function Dashboard() {
     };
 
     try {
-      const res = await fetch('http://localhost:5000/api/bookings', {
+      const res = await fetch(`${API_BASE_URL}/api/bookings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -190,7 +193,7 @@ export default function Dashboard() {
   const openReturnModal = (booking) => {
     const todayStr = new Date().toISOString().split('T')[0];
     setSelectedBookingForReturn(booking);
-    setReturnDateInput(todayStr); // Defaults to today's date
+    setReturnDateInput(todayStr);
   };
 
   // --- Modal Action: Submit Return / Completion ---
@@ -200,7 +203,6 @@ export default function Dashboard() {
     const booking = selectedBookingForReturn;
     const actualEndDate = returnDateInput || booking.endDate;
 
-    // Recalculate bill for actual return date
     const start = new Date(booking.startDate);
     const end = new Date(actualEndDate);
     const diffDays = Math.max(1, Math.round((end - start) / (1000 * 3600 * 24)));
@@ -209,7 +211,7 @@ export default function Dashboard() {
     const updatedTotalCost = diffDays * dailySum;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/bookings/${booking.id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/bookings/${booking.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -235,7 +237,7 @@ export default function Dashboard() {
     setLoading(true);
     setAiResult('');
     try {
-      const res = await fetch('http://localhost:5000/api/ai/care-plan', {
+      const res = await fetch(`${API_BASE_URL}/api/ai/care-plan`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(aiForm)
@@ -377,7 +379,6 @@ export default function Dashboard() {
             </span>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleAddBooking} className="bg-purple-50 p-5 rounded-lg border border-purple-200 mb-6">
             <h3 className="font-semibold text-slate-800 text-sm mb-3">Register New Boarding</h3>
             
@@ -424,7 +425,6 @@ export default function Dashboard() {
                 </select>
               </div>
 
-              {/* Start Date + Checkbox */}
               <div>
                 <label className="text-xs text-slate-600 block mb-1 font-medium">Boarded Date</label>
                 <input 
@@ -445,7 +445,6 @@ export default function Dashboard() {
                 </label>
               </div>
 
-              {/* End Date + Checkbox */}
               <div>
                 <label className="text-xs text-slate-600 block mb-1 font-medium">Expected Return Date</label>
                 <input 
@@ -480,7 +479,6 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Rates Config */}
             <div className="bg-white p-3 rounded border mb-3">
               <label className="text-xs font-semibold text-purple-900 block mb-2">
                 💰 Rate Per Day Configuration ({numBirds} {numBirds > 1 ? 'Birds' : 'Bird'})
@@ -660,7 +658,7 @@ export default function Dashboard() {
         </section>
       </main>
 
-      {/* Modern React Modal Dialog for Return Confirmation */}
+      {/* Return Modal */}
       {selectedBookingForReturn && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-xl border">
